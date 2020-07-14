@@ -1,12 +1,28 @@
-.recipe {
+.recipe-title {
+    background-color: #5955d4;
+    color: white;
+    text-align: center
 }
 
-.hidden {
-    display: none;
+.dismiss-widget {
+    margin-top: 8px;
+    margin-right: 8px;
+    cursor:pointer;
+    float: right;
+    width: 15px;
+    height: 100%;
+    max-height: 20vh;
 }
 
 .searchBoxElement{
-    margin-top: 50px;
+    position: fixed;
+    bottom: 16px;
+    left: 146px;
+    z-index: 10000;
+}
+
+.search-box:focus {
+    background-color: lightyellow;
 }
 
 /* Tooltip container */
@@ -19,9 +35,9 @@
 /* Tooltip text */
 .tooltip .tooltiptext {
     visibility: hidden;
-    width: 300px;
-    background-color: #555;
-    color: #fff;
+    width: 250px;
+    background-color: lightgrey;
+    color: black;
     text-align: center;
     padding: 5px 0;
     border-radius: 6px;
