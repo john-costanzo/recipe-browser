@@ -1,0 +1,236 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Recipe Browser</title>
+    <link rel="stylesheet" href="demo.css" media="screen">
+    <link rel="stylesheet" href="style.css" media="screen">
+    <!-- <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dijit/themes/claro/claro.css" media="screen"> -->
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/dojo/1.10.3/dojo/resources/dojo.css">
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/dojo/1.10.3/dijit/themes/claro/claro.css">
+
+    <style>
+      .fade {
+	  color: gray;
+	  font-style: italic;
+      }
+
+      .expandedPanel {
+	  height: 200px;
+      }
+
+      .collapsedPanel {
+	  height: 5px;
+      }
+
+    </style>
+
+    <script>dojoConfig = {parseOnLoad: true}</script>
+    <script src="https://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dojo/dojo.js"></script>
+
+    <script>
+      const TOP_PANEL = "top_panel";
+      const LEFT_PANEL = "leftPanel";
+      const RIGHT_PANEL = "rightPanel";
+      const CENTER_PANEL = "centerPanel";
+      const COLLAPSE_TOP_PANEL_BUTTON = "collapseTopPanel";
+      const RECIPE_INDEX_CONTAINER = "recipe_index_container";
+      const METHOD_CONTAINER = "method_container";
+      const INGREDIENTS_CONTAINER = "ingredients_container";
+      const CLASS_FADE_STYLE = "fade";
+      const CLASS_EXPANDED_PANEL = "expandedPanel";
+      const CLASS_COLLAPSED_PANEL = "collapsedPanel";
+      
+      const TITLE = 0;
+      const INGREDIENTS = 1;
+      const METHODS = 2;
+      
+      var recipes = [
+	  [ "Recipe 0 Title",
+	    ["Ingredient 0.1", "Ingredient 0.2", "Ingredient 0.3" ],
+	    ["Method 0.1", "Method 0.2", "Method 0.3" ]
+	  ],
+	  [ "Recipe 1 Title",
+	    ["Ingredient 1.1", "Ingredient 1.2", "Ingredient 1.3" ],
+	    ["Method 1.1", "Method 1.2", "Method 1.3" ]
+	  ],
+	  [ "Recipe 2 Title",
+	    ["Ingredient 2.1", "Ingredient 2.2", "Ingredient 2.3" ],
+	    ["Method 2.1", "Method 2.2", "Method 2.3" ]
+	  ]
+      ];
+    </script>
+
+    <script>
+      function ingredientFromId( recipeId, ingredientId ) {
+	  // For recipe identified by recipeId, return the ingredient identified by ingredientId.
+	  console.log( "ingredientFromId(%d, %d)", recipeId, ingredientId );
+	  console.log( "recipes.length=%d", recipes.length );
+	  if( recipeId < 0 || recipeId >= recipes.length ) {
+	      return undefined;
+	  } else {
+	      let r = recipes[ recipeId ];
+	      console.log( "r[%d].length=%d", INGREDIENTS, r[INGREDIENTS].length );
+	      if( ingredientId < 0 || ingredientId >= r[ INGREDIENTS ].length ) {
+		  return undefined;
+	      } else {
+		  console.log("ingredientFromId: returning [%s]", r[ INGREDIENTS ][ ingredientId ] );
+		  return r[ INGREDIENTS ][ ingredientId ];
+	      }
+	  }
+      }
+    </script>
+    
+    <!-- <script> -->
+      <!--   // TODO: use this function -->
+      <!--   function checkbox_id(n,i) {return( "checkbox-" + n + "-" + i ); }  -->
+      
+      <!--   var addCheckBoxIngredient; -->
+      <!--   require(["dijit/form/CheckBox", "dojo/domReady!"], function(CheckBox){ -->
+      <!-- 	  addCheckBoxIngredient=function(recipeId, ingredientId, refNode) { -->
+      <!-- 	      // For recipe identified by recipeId, display a checkbox along with the ingredient identified by ingredientId -->
+      <!-- 	      // as the last child of refNode. -->
+
+      <!-- 	      // BUG: Although innerHTML is being set on the checkbox, it is not being displayed! -->
+      
+      <!-- 	      let ingredient = ingredientFromId( recipeId, ingredientId ); -->
+      <!-- 	      require(["dojo"], function(dojo){ -->
+      <!-- 		  var cb = new CheckBox({ -->
+      <!-- 		      name: "checkBox"+ingredientId, -->
+      <!-- 		      checked: false, -->
+      <!-- 		      onChange: -->
+      <!-- 		      function(b){ -->
+      <!-- 			  console.log('onChange called on checkbox#' + ingredientId + ' with parameter = ' + b + ', and widget value = ' + this.get('value') ); -->
+      <!-- 			  console.log("About to set innerHTML for checkBox" + ingredientId); -->
+      <!-- 			  if( b ) { -->
+      <!-- 			      // TODO: rewrite to simply add/remove the class -->
+      <!-- 			      dojo.query("label[for=checkBox" + ingredientId + "]")[0].innerHTML = "<span class='style1'>" + ingredient + "</span>"; -->
+      <!-- 			  } else { -->
+      <!-- 			      dojo.query("label[for=checkBox" + ingredientId + "]")[0].innerHTML = "<span>" + ingredient + "</span>"; -->
+      <!-- 			  } -->
+      <!-- 		      } -->
+      <!-- 		  }, "checkBox"+ingredientId ); -->
+      <!-- 		  console.log( "cb=" + cb ); -->
+      <!-- 		  console.log( "refNode=" + refNode ); -->
+
+      <!-- 		  cb.placeAt(refNode); -->
+      <!-- 		  cb.domNode.appendChild(dojo.create("label", {"for" : "checkBox"+ingredientId, innerHTML: "<span>" + ingredient + "</span>"})); -->
+      <!-- 	      }); -->
+      <!-- 	  }; -->
+      <!--   }); -->
+      <!--   </script> -->
+  </head>
+
+  <script>
+    function expandTopPanel(cb) {
+	require(["dojo/dom", "dojo/dom-class", "dijit/registry"], function( dom, domClass, registry ) {
+	    let node = dom.byId( TOP_PANEL );
+	    if( cb.checked ) {
+		registry.byId( TOP_PANEL ).set('style','height: 15px;');
+	    } else {
+		registry.byId( TOP_PANEL ).set('style','height: 200px;');
+	    }
+	    registry.byId( "appLayout" ).layout();
+	});
+    }
+
+    function expandLeftPanel(cb) {
+	require(["dojo/dom", "dojo/dom-class", "dijit/registry"], function( dom, domClass, registry ) {
+	    let node = dom.byId( LEFT_PANEL );
+	    if( cb.checked ) {
+		registry.byId( LEFT_PANEL ).set('style','width: 15px;');
+	    } else {
+		registry.byId( LEFT_PANEL ).set('style','width: 200px;');
+	    }
+	    registry.byId( "appLayout" ).layout();
+	});
+    }
+  </script>
+
+  <body class="claro">
+    <div id="appLayout" class="demoLayout" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design: 'headline'">
+
+      <div id="top_panel" class="edgePanel expandedPanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'top'">
+	<input type="checkbox" id="collapseTopPanel" onclick="expandTopPanel(this);"/> <label for="collapseTopPanel"><i>collapsed?</i></label>
+      </div>
+
+      <div class="centerPanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'center'">
+	<center><h2>Method</h2></center>
+	<div id="method_container"></div>
+      </div>
+
+      <div id="leftPanel" class="edgePanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'left', splitter: true">
+	<center><h2>Recipes</h2></center>
+	<input type="checkbox" id="collapseLeftPanel" onclick="expandLeftPanel(this);"/> <label for="collapseLeftPanel"><i>collapsed?</i></label>
+	<ul id="recipe_index_container"></ul>
+      </div>
+
+      <div id="rightPanel" class="edgePanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'right', splitter: true, style: { width: '300px' }">
+	<center><h2>Ingredients</h2></center>
+	<div id="ingredients_container"></div>
+      </div>
+
+    </div>
+
+    <script>
+      var toggleClass;
+      require(["dojo/dom-class"], function( domClass ) {
+	  toggleClass = function( elt, classTag ) {
+	      // If the element ELT already is already a member of classTag, remove it. Else add it.
+	      if( elt.classList.contains( classTag ) ) {
+		  domClass.remove( elt, classTag );
+	      } else {
+		  domClass.add( elt, classTag );
+	      }
+	  }
+      });
+
+      function displayRecipe( recipeRecord ) {
+	  let title = recipeRecord[ TITLE ];
+	  let ingredients = recipeRecord[ INGREDIENTS ];
+	  let methods = recipeRecord[ METHODS ];
+
+	  dojo.empty( METHOD_CONTAINER );
+	  dojo.empty( INGREDIENTS_CONTAINER );
+	  
+	  // Display methods
+	  methods.forEach(( meth, idx, arr) => {
+	      require(["dojo/dom-construct", "dojo/dom", "dojo/on"], function( domConstruct, dom, on, domClass ) {
+
+		  let li = domConstruct.create( "li",
+						{ innerHTML: meth + "<br>" },
+						dom.byId( METHOD_CONTAINER )
+					      );
+		  on( li, "click", function() { toggleClass( li, CLASS_FADE_STYLE ); } );
+	      });
+	  });
+	  
+	  // Display ingredients
+	  ingredients.forEach(( ingr, idx, arr) => {
+	      require(["dojo/dom-construct", "dojo/dom", "dojo/on"], function( domConstruct, dom, on, domClass ) {
+		  let li = domConstruct.create( "li",
+						{ innerHTML: ingr + "<br>" },
+						dom.byId( INGREDIENTS_CONTAINER )
+					      );
+		  on( li, "click", function() { toggleClass( li, CLASS_FADE_STYLE ); } );
+	      });
+	  });
+      }
+      </script>
+
+    <script>
+      // Load all recipes
+      recipes.forEach(( recipeRecord, idx, arr) => {
+	  require(["dojo/dom-construct", "dojo/dom", "dojo/on"], function( domConstruct, dom, on ) {
+	      let li = domConstruct.create( "li",
+					    { title: recipeRecord[ TITLE ],
+					      innerHTML: recipeRecord[ TITLE ] + "<br>"
+					    },
+					    dom.byId( RECIPE_INDEX_CONTAINER )
+					  );
+	      on( li, "click", function() { displayRecipe( recipeRecord ); } );
+	  });
+      });
+      </script>
+  </body>
+</html>

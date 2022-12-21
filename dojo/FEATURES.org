@@ -1,0 +1,14 @@
+* Features
++ [ ] share button (with at least email)
++ [ ] automatically detect when there is mention of {seconds, minutes, hours} in a method and offer a countdown timer with that duration
++ [ ] search box has autocomplete of indexed tags(?)
++ [ ] printable version of recipe
++ [ ] stable URL
++ [X] "completed" control on both ingredients and methods (which, when checked, diminish the text)
++ [ ] adjustable text sizes(?)
++ [ ] filter by category(?)
++ [-] panels:
+    - [X] top: controls (collapsible)
+    - [ ] left: index (collapsible)
+    - [ ] right: ingredients
+    - [ ] center: methods
