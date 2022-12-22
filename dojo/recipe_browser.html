@@ -3,9 +3,12 @@
   <head>
     <meta charset="utf-8">
     <title>Recipe Browser</title>
+    <script src="https://kit.fontawesome.com/9ca6d20ba4.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="demo.css" media="screen">
     <link rel="stylesheet" href="style.css" media="screen">
     <!-- <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dijit/themes/claro/claro.css" media="screen"> -->
+
+    <!-- Do we need these two stylesheets? -->
     <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/dojo/1.10.3/dojo/resources/dojo.css">
     <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/dojo/1.10.3/dijit/themes/claro/claro.css">
 
@@ -29,8 +32,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dojo/dojo.js"></script>
 
     <script>
-      const TOP_PANEL = "top_panel";
+      const APP_LAYOUT = "appLayout";
+      const TOP_PANEL = "topPanel";
+      const TOP_PANEL_EXPANDER = "topPanelExpander";
       const LEFT_PANEL = "leftPanel";
+      const LEFT_PANEL_EXPANDER = "leftPanelExpander";
       const RIGHT_PANEL = "rightPanel";
       const CENTER_PANEL = "centerPanel";
       const COLLAPSE_TOP_PANEL_BUTTON = "collapseTopPanel";
@@ -81,92 +87,56 @@
       }
     </script>
     
-    <!-- <script> -->
-      <!--   // TODO: use this function -->
-      <!--   function checkbox_id(n,i) {return( "checkbox-" + n + "-" + i ); }  -->
-      
-      <!--   var addCheckBoxIngredient; -->
-      <!--   require(["dijit/form/CheckBox", "dojo/domReady!"], function(CheckBox){ -->
-      <!-- 	  addCheckBoxIngredient=function(recipeId, ingredientId, refNode) { -->
-      <!-- 	      // For recipe identified by recipeId, display a checkbox along with the ingredient identified by ingredientId -->
-      <!-- 	      // as the last child of refNode. -->
-
-      <!-- 	      // BUG: Although innerHTML is being set on the checkbox, it is not being displayed! -->
-      
-      <!-- 	      let ingredient = ingredientFromId( recipeId, ingredientId ); -->
-      <!-- 	      require(["dojo"], function(dojo){ -->
-      <!-- 		  var cb = new CheckBox({ -->
-      <!-- 		      name: "checkBox"+ingredientId, -->
-      <!-- 		      checked: false, -->
-      <!-- 		      onChange: -->
-      <!-- 		      function(b){ -->
-      <!-- 			  console.log('onChange called on checkbox#' + ingredientId + ' with parameter = ' + b + ', and widget value = ' + this.get('value') ); -->
-      <!-- 			  console.log("About to set innerHTML for checkBox" + ingredientId); -->
-      <!-- 			  if( b ) { -->
-      <!-- 			      // TODO: rewrite to simply add/remove the class -->
-      <!-- 			      dojo.query("label[for=checkBox" + ingredientId + "]")[0].innerHTML = "<span class='style1'>" + ingredient + "</span>"; -->
-      <!-- 			  } else { -->
-      <!-- 			      dojo.query("label[for=checkBox" + ingredientId + "]")[0].innerHTML = "<span>" + ingredient + "</span>"; -->
-      <!-- 			  } -->
-      <!-- 		      } -->
-      <!-- 		  }, "checkBox"+ingredientId ); -->
-      <!-- 		  console.log( "cb=" + cb ); -->
-      <!-- 		  console.log( "refNode=" + refNode ); -->
-
-      <!-- 		  cb.placeAt(refNode); -->
-      <!-- 		  cb.domNode.appendChild(dojo.create("label", {"for" : "checkBox"+ingredientId, innerHTML: "<span>" + ingredient + "</span>"})); -->
-      <!-- 	      }); -->
-      <!-- 	  }; -->
-      <!--   }); -->
-      <!--   </script> -->
   </head>
 
   <script>
-    function expandTopPanel(cb) {
-	require(["dojo/dom", "dojo/dom-class", "dijit/registry"], function( dom, domClass, registry ) {
-	    let node = dom.byId( TOP_PANEL );
-	    if( cb.checked ) {
-		registry.byId( TOP_PANEL ).set('style','height: 15px;');
+    function togglePanel( vertical, contract, panel, elt, icon1Class, icon2Class ) {
+	// If VERTICAL, expansion/contract is done vertically; else horizontally.
+	// If CONTRACT is true
+	//   For PANEL, contract it.
+	// else
+	//   For PANEL, enlarge it.
+	// In either case, remove ICON1CLASS, add ICON2CLASS and
+	// set the onclick behavior of ELT to match the current state.
+	require(["dojo/dom-class", "dijit/registry", "dojo/dom"], function( domClass, registry, dom ) {
+	    let dir = "width";
+	    if( vertical ) dir = "height";
+	    if( contract ) {
+		registry.byId( panel ).set('style', dir + ': 15px;');
 	    } else {
-		registry.byId( TOP_PANEL ).set('style','height: 200px;');
+		registry.byId( panel ).set('style', dir +': 200px;');
 	    }
-	    registry.byId( "appLayout" ).layout();
+
+	    domClass.remove( elt, icon1Class );
+	    domClass.add( elt, icon2Class );
+
+	    require(["dojo/on"], function( on ) {
+		on( dom.byId( elt ), "click", function() { togglePanel( vertical, !contract, panel, elt, icon2Class, icon1Class ); } );
+	    });
+	    registry.byId( APP_LAYOUT ).layout();
 	});
     }
 
-    function expandLeftPanel(cb) {
-	require(["dojo/dom", "dojo/dom-class", "dijit/registry"], function( dom, domClass, registry ) {
-	    let node = dom.byId( LEFT_PANEL );
-	    if( cb.checked ) {
-		registry.byId( LEFT_PANEL ).set('style','width: 15px;');
-	    } else {
-		registry.byId( LEFT_PANEL ).set('style','width: 200px;');
-	    }
-	    registry.byId( "appLayout" ).layout();
-	});
-    }
+
   </script>
 
   <body class="claro">
     <div id="appLayout" class="demoLayout" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design: 'headline'">
 
-      <div id="top_panel" class="edgePanel expandedPanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'top'">
-	<input type="checkbox" id="collapseTopPanel" onclick="expandTopPanel(this);"/> <label for="collapseTopPanel"><i>collapsed?</i></label>
+      <div id="topPanel" class="edgePanel expandedPanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'top'">
+	<i id="topPanelExpander" class="fa-solid fa-angles-up" onclick="togglePanel( true, true, TOP_PANEL, TOP_PANEL_EXPANDER, 'fa-angles-up', 'fa-angles-down' );"></i>
       </div>
 
       <div class="centerPanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'center'">
-	<center><h2>Method</h2></center>
 	<div id="method_container"></div>
       </div>
 
       <div id="leftPanel" class="edgePanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'left', splitter: true">
-	<center><h2>Recipes</h2></center>
-	<input type="checkbox" id="collapseLeftPanel" onclick="expandLeftPanel(this);"/> <label for="collapseLeftPanel"><i>collapsed?</i></label>
+	<i id="leftPanelExpander" class="fa-solid fa-angles-left" onclick="togglePanel( false, true, LEFT_PANEL, LEFT_PANEL_EXPANDER, 'fa-angles-left', 'fa-angles-right' );"></i><br>
 	<ul id="recipe_index_container"></ul>
       </div>
 
       <div id="rightPanel" class="edgePanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'right', splitter: true, style: { width: '300px' }">
-	<center><h2>Ingredients</h2></center>
 	<div id="ingredients_container"></div>
       </div>
 
@@ -195,7 +165,7 @@
 	  
 	  // Display methods
 	  methods.forEach(( meth, idx, arr) => {
-	      require(["dojo/dom-construct", "dojo/dom", "dojo/on"], function( domConstruct, dom, on, domClass ) {
+	      require(["dojo/dom-construct", "dojo/dom", "dojo/on"], function( domConstruct, dom, on ) {
 
 		  let li = domConstruct.create( "li",
 						{ innerHTML: meth + "<br>" },
@@ -207,7 +177,7 @@
 	  
 	  // Display ingredients
 	  ingredients.forEach(( ingr, idx, arr) => {
-	      require(["dojo/dom-construct", "dojo/dom", "dojo/on"], function( domConstruct, dom, on, domClass ) {
+	      require(["dojo/dom-construct", "dojo/dom", "dojo/on"], function( domConstruct, dom, on ) {
 		  let li = domConstruct.create( "li",
 						{ innerHTML: ingr + "<br>" },
 						dom.byId( INGREDIENTS_CONTAINER )
