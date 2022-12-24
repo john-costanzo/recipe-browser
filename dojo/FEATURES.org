@@ -6,9 +6,10 @@
 + [ ] stable URL
 + [X] "completed" control on both ingredients and methods (which, when checked, diminish the text)
 + [ ] adjustable text sizes(?)
++ [X] filter by keyword(?)
 + [ ] filter by category(?)
-+ [-] panels:
++ [X] panels:
     - [X] top: controls (collapsible)
-    - [ ] left: index (collapsible)
-    - [ ] right: ingredients
-    - [ ] center: methods
+    - [X] left: index (collapsible)
+    - [X] right: ingredients
+    - [X] center: methods

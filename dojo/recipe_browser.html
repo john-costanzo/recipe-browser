@@ -47,23 +47,44 @@
       const CLASS_EXPANDED_PANEL = "expandedPanel";
       const CLASS_COLLAPSED_PANEL = "collapsedPanel";
       
+      // Position of various fields in a Recipe Record.
       const TITLE = 0;
       const INGREDIENTS = 1;
       const METHODS = 2;
+      const CATEGORY = 3;
       
-      var recipes = [
-	  [ "Recipe 0 Title",
-	    ["Ingredient 0.1", "Ingredient 0.2", "Ingredient 0.3" ],
-	    ["Method 0.1", "Method 0.2", "Method 0.3" ]
+      // A HashMap consisting of a string key as the RecipeId and a list:
+      // [ TITLE, [List of INGREDIENTS], [List of METHODS], Category]
+      var recipes = new Map([
+	  ['CostanzoRecipes_Entrees_VegetarianLentilBurgerRecipe',
+	   [ "Vegetarian Lentil Burger Recipe",
+	     ["Ingredient 0.1", "Ingredient 0.2", "Ingredient 0.3" ],
+	     ["Method 0.1", "Method 0.2", "Method 0.3" ],
+	     "Entree"
+	   ]
 	  ],
-	  [ "Recipe 1 Title",
-	    ["Ingredient 1.1", "Ingredient 1.2", "Ingredient 1.3" ],
-	    ["Method 1.1", "Method 1.2", "Method 1.3" ]
+	  ['CostanzoRecipes_Entrees_VegetablePotPie',
+	   [ "Vegetable Pot Pie",
+	     ["Ingredient 1.1", "Ingredient 1.2", "Ingredient 1.3" ],
+	     ["Method 1.1", "Method 1.2", "Method 1.3" ],
+	     "Entree"
+	   ]
 	  ],
-	  [ "Recipe 2 Title",
-	    ["Ingredient 2.1", "Ingredient 2.2", "Ingredient 2.3" ],
-	    ["Method 2.1", "Method 2.2", "Method 2.3" ]
+	  ['CostanzoRecipes_Appetizers_HotPepperJelly',
+	   [ "Hot Pepper Jelly",
+	     ["Ingredient 2.1", "Ingredient 2.2", "Ingredient 2.3" ],
+	     ["Method 2.1", "Method 2.2", "Method 2.3" ],
+	     "Appetizer"
+	   ]
 	  ]
+      ]);
+
+      // entries correspond to the same numbered index in recipes and
+      // are [ recipeId, term1, term2, ... termN]
+      var index = [
+	  [ 'CostanzoRecipes_Entrees_VegetarianLentilBurgerRecipe', 'extra-virgin', 'vegetarian', 'lentil', 'burger', 'recipe', 'lentils', 'tablespoon', 'black', 'teaspoon', 'toasted', 'fine-grain', 'finely', 'entrees', 'cooked', 'butter)', 'oil', 'bread', 'onion,', 'cups', 'salt', 'cup', 'clarified', 'chopped', 'large', 'olive', 'sea', 'eggs', 'fine', 'crumbs' ],
+	  [ 'CostanzoRecipes_Entrees_VegetablePotPie', 'flour', 'vegetable', 'thyme', 'half-and-half', 'your', 'onion,', 'melted', 'all-purpose', 'cup', 'cups', 'salt', 'rosemary', 'broth', 'of', 'own', 'bought', 'meat', 'carrots,', 'pie', 'mock', 'diced', 'tvp', 'teaspoon', 'store', 'entrees', 'crust', 'or', 'other', 'potato,', 'pepper', 'celery,', 'peas', 'recipe)', 'butter', 'vegetable', 'pot', 'pie' ],
+	  [ 'CostanzoRecipes_Appetizers_HotPepperJelly', 'jalapeno', 'package', 'red', 'pectin', 'bell', 'appetizers', 'finely', 'green', 'ounce)', 'peppers', 'apple', 'cups', 'cup', 'white', 'sugar', 'hot', 'pepper', 'jelly', 'powdered', 'chopped', 'vinegar', 'cider' ]
       ];
     </script>
 
@@ -71,11 +92,11 @@
       function ingredientFromId( recipeId, ingredientId ) {
 	  // For recipe identified by recipeId, return the ingredient identified by ingredientId.
 	  console.log( "ingredientFromId(%d, %d)", recipeId, ingredientId );
-	  console.log( "recipes.length=%d", recipes.length );
-	  if( recipeId < 0 || recipeId >= recipes.length ) {
+	  console.log( "recipes.size=%d", recipes.size );
+	  if( recipeId === undefined || !recipes.has( recipeId ) ) {
 	      return undefined;
 	  } else {
-	      let r = recipes[ recipeId ];
+	      let r = recipes.get( recipeId );
 	      console.log( "r[%d].length=%d", INGREDIENTS, r[INGREDIENTS].length );
 	      if( ingredientId < 0 || ingredientId >= r[ INGREDIENTS ].length ) {
 		  return undefined;
@@ -87,44 +108,78 @@
       }
     </script>
     
+
+    <script>
+      function togglePanel( vertical, contract, panel, elt, icon1Class, icon2Class ) {
+	  // If VERTICAL, expansion/contract is done vertically; else horizontally.
+	  // If CONTRACT is true
+	  //   For PANEL, contract it.
+	  // else
+	  //   For PANEL, enlarge it.
+	  // In either case, remove ICON1CLASS, add ICON2CLASS and
+	  // set the onclick behavior of ELT to match the current state.
+	  require(["dojo/dom-class", "dijit/registry", "dojo/dom"], function( domClass, registry, dom ) {
+	      let dir = "width";
+	      if( vertical ) dir = "height";
+	      if( contract ) {
+		  registry.byId( panel ).set('style', dir + ': 15px;');
+	      } else {
+		  registry.byId( panel ).set('style', dir +': 200px;');
+	      }
+
+	      domClass.remove( elt, icon1Class );
+	      domClass.add( elt, icon2Class );
+
+	      require(["dojo/on"], function( on ) {
+		  on( dom.byId( elt ), "click", function() { togglePanel( vertical, !contract, panel, elt, icon2Class, icon1Class ); } );
+	      });
+	      registry.byId( APP_LAYOUT ).layout();
+	  });
+      }
+
+
+    </script>
+
+    <script>
+      function prefixInList( prefix, list ) {
+	  // Return whether PREFIX appears as a prefix to at least one element of LIST.
+	  // Examples:
+	  //    prefixInList( "gam", [ "alpha", "beta", "gamma" ] ) ==> true
+	  //    prefixInList( "delt", [ "alpha", "beta", "gamma" ] ) ==> false
+	  const re = new RegExp( "^" + prefix );
+	  console.log( "prefixInList: re = " + re );
+	  console.log( "prefixInList: list = \n" + list.join("\n") + "\n\n" );
+	  return list.some( ( elt ) => re.test( elt ) );
+      }
+
+      function filterRecipes( e ) {
+	  // Filter the list of recipes based on the event E (a change to the text box containing filter terms).
+	  const filterString = e.value;
+	  const terms = filterString.split(" ");
+	  console.log( 'filterRecipes: processing terms [' + terms.join( ";" ) + ']' );
+	  dojo.empty( RECIPE_INDEX_CONTAINER );
+	  const result = index.filter( (indexRec) => terms.every( (term) => prefixInList( term, indexRec.slice(1) ) ) ) ;
+	  console.log( "filterRecipes: result = \n" + result.join( "  \n" ) );
+
+	  result.forEach( ( indexRecord ) => {
+	      console.log( "filterRecipes: indexRecord=" + indexRecord );
+	      displayRecipeTitle( recipes.get( indexRecord[ 0 ] ) );
+	  });
+      }
+
+    </script>
+
   </head>
-
-  <script>
-    function togglePanel( vertical, contract, panel, elt, icon1Class, icon2Class ) {
-	// If VERTICAL, expansion/contract is done vertically; else horizontally.
-	// If CONTRACT is true
-	//   For PANEL, contract it.
-	// else
-	//   For PANEL, enlarge it.
-	// In either case, remove ICON1CLASS, add ICON2CLASS and
-	// set the onclick behavior of ELT to match the current state.
-	require(["dojo/dom-class", "dijit/registry", "dojo/dom"], function( domClass, registry, dom ) {
-	    let dir = "width";
-	    if( vertical ) dir = "height";
-	    if( contract ) {
-		registry.byId( panel ).set('style', dir + ': 15px;');
-	    } else {
-		registry.byId( panel ).set('style', dir +': 200px;');
-	    }
-
-	    domClass.remove( elt, icon1Class );
-	    domClass.add( elt, icon2Class );
-
-	    require(["dojo/on"], function( on ) {
-		on( dom.byId( elt ), "click", function() { togglePanel( vertical, !contract, panel, elt, icon2Class, icon1Class ); } );
-	    });
-	    registry.byId( APP_LAYOUT ).layout();
-	});
-    }
-
-
-  </script>
 
   <body class="claro">
     <div id="appLayout" class="demoLayout" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design: 'headline'">
 
       <div id="topPanel" class="edgePanel expandedPanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'top'">
-	<i id="topPanelExpander" class="fa-solid fa-angles-up" onclick="togglePanel( true, true, TOP_PANEL, TOP_PANEL_EXPANDER, 'fa-angles-up', 'fa-angles-down' );"></i>
+	<i id="topPanelExpander" class="fa-solid fa-angles-up"
+	   onclick="togglePanel( true, true, TOP_PANEL, TOP_PANEL_EXPANDER, 'fa-angles-up', 'fa-angles-down' );"></i>
+
+	<label for="filter">Filter:</label>
+	<input id="filter" type="text" autofocus oninput="filterRecipes(this)">
       </div>
 
       <div class="centerPanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'center'">
@@ -189,8 +244,9 @@
       </script>
 
     <script>
-      // Load all recipes
-      recipes.forEach(( recipeRecord, idx, arr) => {
+      function displayRecipeTitle( recipeRecord ) {
+	  // Display the title for RECIPERECORD in the recipes panel.
+	  // Ensure that what displays is actionable.
 	  require(["dojo/dom-construct", "dojo/dom", "dojo/on"], function( domConstruct, dom, on ) {
 	      let li = domConstruct.create( "li",
 					    { title: recipeRecord[ TITLE ],
@@ -198,9 +254,12 @@
 					    },
 					    dom.byId( RECIPE_INDEX_CONTAINER )
 					  );
-	      on( li, "click", function() { displayRecipe( recipeRecord ); } );
+	      on( li, "click", function() { displayRecipe( recipeRecord ); } ); // TODO: switch to index of recipe?
 	  });
-      });
+      }
+      
+      // Load all recipes
+      recipes.forEach( function( recipeRecord, key ) { displayRecipeTitle( recipeRecord ); } );
       </script>
   </body>
 </html>
