@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/themes/light.css" />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/components/split-panel/split-panel.js"></script>
+
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/components/button/button.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0/dist/components/drawer/drawer.js"></script>
+  </head>
+
+  <body>
+    <sl-drawer label="Drawer" placement="top" class="drawer-placement-top">
+      This drawer slides in from the top.
+      <sl-button slot="footer" variant="primary">Close</sl-button>
+    </sl-drawer>
+
+    <sl-button>Open Drawer</sl-button>
+
+    <script>
+      const drawer = document.querySelector('.drawer-placement-top');
+      const openButton = drawer.nextElementSibling;
+      const closeButton = drawer.querySelector('sl-button[variant="primary"]');
+
+      openButton.addEventListener('click', () => drawer.show());
+      closeButton.addEventListener('click', () => drawer.hide());
+    </script>
+
+
+    <style>
+      :root {
+	  --panel-height: 500px;
+      }
+    </style>
+
+
+    <sl-split-panel position = "15" style="height: 100%; --min: 250px; --max: calc(100% - 550px);">
+      <div
+	slot="start"
+        style="height: var(--panel-height); background: var(--sl-color-neutral-50); display: flex; flex-direction: column; align-items: start; justify-content: flex-start; overflow: auto;"
+	>
+        <h2 style="margin-top: 0; margin-left: auto; margin-right: auto; text-align: center">Recipe Titles</h2>
+	<ul>
+	  <li>Title 1</li>
+	  <li>Title 2</li>
+	  <li>Title 3</li>
+	</ul>
+      </div>
+      <div slot="end">
+	<sl-split-panel style="height: 100%; --min: 250px; --max: calc(100% - 150px);">
+	  <div
+            slot="start"
+            style="height: var(--panel-height); background: var(--sl-color-neutral-50); display: flex; flex-direction: column; align-items: start; justify-content: flex-start; overflow: auto;"
+	    >
+            <h2 style="margin-top: 0; margin-left: auto; margin-right: auto; text-align: center">Method</h2>
+
+	    <h3>Sub Recipe1</h3>
+	    Method blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah, 
+	    <ol>
+	      <li>one one one one one one one one one one one one one one one one one one one one one one one</li>
+	      <li>two</li>
+	      <li>three</li>
+	    </ol>
+
+	    <ol>
+	      <li>one one one one one one one one one one one one one one one one one one one one one one one</li>
+	      <li>two</li>
+	      <li>3 three three three three three three three three three three three three three three three three 3 three three three three three three three three three three three three three</li>
+	    </ol>
+
+	    <ol>
+	      <li>one one one one one one one one one one one one one one one one one one one one one one one</li>
+	      <li>two</li>
+	      <li>three</li>
+	    </ol>
+
+	    <ol>
+	      <li>one one one one one one one one one one one one one one one one one one one one one one one</li>
+	      <li>two</li>
+	      <li>three</li>
+	    </ol>
+	    <h3>Sub Recipe2</h3>
+	    Method blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah, 
+	    <ol>
+	      <li>one one one one one one one one one one one one one one one one one one one one one one one</li>
+	      <li>two</li>
+	      <li>three</li>
+	    </ol>
+
+
+	  </div>
+
+	  <div
+            slot="end"
+            style="height: var(--panel-height); background: var(--sl-color-neutral-50); display: flex; flex-direction: column; align-items: start; justify-content: start; overflow: auto"
+	    >
+            <h2 style="margin-top: 0; margin-left: auto; margin-right: auto; text-align: center">Ingredients</h2>
+	    <h3>Sub Recipe1</h3>
+	    Ingredients blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah, 
+	    <ol>
+	      <li>one one one one one one one one one one one one one one one one one one one one one one one</li>
+	      <li>two</li>
+	      <li>three</li>
+	    </ol>
+
+	    ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients
+	    ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients
+	    ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients
+	    ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients
+	    ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients
+	    ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients
+	    ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients
+	    ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients
+	    ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients
+	    ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients
+	    ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients
+	    ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients
+	    ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients
+	    ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients
+	    ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients, ingredients
+
+	    aaa
+	    bbbb
+	    <br>
+	    ccc
+	    ddd
+	    <ol>
+	      <li>one</li>
+	      <li>two</li>
+	      <li>three</li>
+	    </ol>
+
+	    <ol>
+	      <li>one</li>
+	      <li>two</li>
+	      <li>three</li>
+	    </ol>
+
+	    <ol>
+	      <li>one</li>
+	      <li>two</li>
+	      <li>three</li>
+	    </ol>
+
+	    <h3>Sub Recipe2</h3>
+	    Ingredients blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah,  blah, blah, blah, 
+	    <ol>
+	      <li>one one one one one one one one one one one one one one one one one one one one one one one</li>
+	      <li>two</li>
+	      <li>three</li>
+	    </ol>
+
+	    
+	  </div>
+	</sl-split-panel>
+      </div>
+    </sl-split-panel>
+  <body>
+
+</html>
